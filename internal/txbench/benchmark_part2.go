@@ -7,6 +7,7 @@ package txbench
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"sync"
 	"time"
 
@@ -193,14 +194,14 @@ func (s *failingService) Healthy(ctx context.Context) bool {
 
 // Helper functions for failure injection
 func randomFailurePhase() string {
-    phases := []string{"reserve", "commit", "rollback", "confirm", "status", "health"}
-    return phases[rand.Intn(len(phases))]
+	phases := []string{"reserve", "commit", "rollback", "confirm", "status", "health"}
+	return phases[rand.Intn(len(phases))]
 }
 
 // getPhaseLatencies extracts timing information from a transaction
 func getPhaseLatencies(tx *patterns.Transaction) map[string]time.Duration {
 	latencies := make(map[string]time.Duration)
-	
+
 	// Basic phase timing from transaction status changes
 	if tx.StartTime.IsZero() || tx.EndTime.IsZero() {
 		return latencies
