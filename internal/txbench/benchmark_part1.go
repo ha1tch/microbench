@@ -16,6 +16,7 @@ import (
 	"github.com/ha1tch/microbench/internal/broker"
 	"github.com/ha1tch/microbench/internal/patterns"
 	"github.com/ha1tch/microbench/internal/services"
+	cs "github.com/ha1tch/microbench/internal/services/core"
 )
 
 // Config holds benchmark configuration
@@ -153,21 +154,21 @@ func (b *Benchmark) initializeServices(ctx context.Context) error {
 
 	// Initialize services with error handling
 	var err error
-	if b.orderService, err = services.NewOrderService(orderConfig); err != nil {
+	if b.orderService, err = cs.NewOrderService(orderConfig); err != nil {
 		return err
 	}
 	if err = b.orderService.Initialize(ctx); err != nil {
 		return err
 	}
 
-	if b.inventoryService, err = services.NewInventoryService(inventoryConfig); err != nil {
+	if b.inventoryService, err = cs.NewInventoryService(inventoryConfig); err != nil {
 		return err
 	}
 	if err = b.inventoryService.Initialize(ctx); err != nil {
 		return err
 	}
 
-	if b.paymentService, err = services.NewPaymentService(paymentConfig); err != nil {
+	if b.paymentService, err = cs.NewPaymentService(paymentConfig); err != nil {
 		return err
 	}
 	if err = b.paymentService.Initialize(ctx); err != nil {
