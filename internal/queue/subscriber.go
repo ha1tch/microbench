@@ -77,7 +77,8 @@ func (s *Subscriber) Start(ctx context.Context) error {
 
 		// Record metrics
 		s.metrics.RecordMessage(false)
-		s.metrics.RecordLatency(msg.Timestamp)
+
+		//s.metrics.RecordLatency(msg.Timestamp)
 
 		// Simulate message processing if configured
 		if s.config.ProcessingTime > 0 {
@@ -148,7 +149,7 @@ func (s *Subscriber) GetStats() map[string]interface{} {
 	}
 
 	stats := map[string]interface{}{
-		"messages":          s.msgCount,
+		"messages":         s.msgCount,
 		"errors":           s.errorCount,
 		"duration":         duration,
 		"messages_per_s":   float64(s.msgCount) / duration.Seconds(),
