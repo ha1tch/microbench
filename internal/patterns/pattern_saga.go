@@ -12,10 +12,10 @@ import (
 
 // SagaStep represents a step in the saga
 type SagaStep struct {
-	Participant  *Participant
-	Completed   bool
+	Participant      *Participant
+	Completed        bool
 	CompensateNeeded bool
-	Error       error
+	Error            error
 }
 
 // Saga implements the Saga pattern with compensating transactions
@@ -80,7 +80,7 @@ func (p *Saga) executeSaga(ctx context.Context, tx *Transaction) error {
 	for i, step := range steps {
 		// Create context with timeout for this step
 		stepCtx, cancel := context.WithTimeout(ctx, p.config.PrepareTimeout)
-		
+
 		// Execute forward action with retries
 		var execErr error
 		for attempt := 0; p.config.RetryAttempts == -1 || attempt <= p.config.RetryAttempts; attempt++ {
@@ -95,7 +95,8 @@ func (p *Saga) executeSaga(ctx context.Context, tx *Transaction) error {
 			}
 
 			// First reserve the resource
-			resource, err := step.Participant.Service.Reserve(stepCtx, step.Participant.ResourceID)
+			// resource, err := step.Participant.Service.Reserve(stepCtx, step.Partic    ipant.ResourceID)
+			_, err := step.Participant.Service.Reserve(stepCtx, step.Participant.ResourceID)
 			if err != nil {
 				execErr = err
 				continue
@@ -122,7 +123,7 @@ func (p *Saga) executeSaga(ctx context.Context, tx *Transaction) error {
 			// Step failed, mark for compensation
 			step.Error = execErr
 			step.CompensateNeeded = false // Failed before completion
-			
+
 			// Mark all completed steps for compensation
 			for j := 0; j < i; j++ {
 				steps[j].CompensateNeeded = true
@@ -244,7 +245,7 @@ func (p *Saga) buildExecutionOrder(participants []*Participant) []*Participant {
 	// 1. Analyze dependencies between participants
 	// 2. Create an optimal execution order
 	// 3. Consider parallel execution possibilities
-	
+
 	// For this implementation, we'll use the order as provided
 	return participants
 }

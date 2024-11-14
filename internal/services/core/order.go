@@ -3,7 +3,7 @@ package core
 
 import (
 	"context"
-	"fmt"
+	//	"fmt"
 	"sync"
 	"time"
 
@@ -161,8 +161,8 @@ func (s *OrderService) Reserve(ctx context.Context, id string) (*services.Resour
 	}
 
 	// Check if order can be reserved
-	if order.Resource.State != services.StateInitial && 
-	   order.Resource.State != services.StateRollback {
+	if order.Resource.State != services.StateInitial &&
+		order.Resource.State != services.StateRollback {
 		return nil, services.ErrInvalidState
 	}
 

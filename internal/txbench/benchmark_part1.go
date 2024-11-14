@@ -6,6 +6,7 @@ package txbench
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"sort"
 	"sync"
@@ -82,20 +83,20 @@ type Benchmark struct {
 	paymentService   services.Service
 
 	// Metrics
-	mu              sync.RWMutex
-	results         *Results
-	inWarmup        bool
-	warmupComplete  bool
-	resourcePool    *resourcePool
+	mu             sync.RWMutex
+	results        *Results
+	inWarmup       bool
+	warmupComplete bool
+	resourcePool   *resourcePool
 }
 
 // resourcePool manages test resources
 type resourcePool struct {
 	mu sync.RWMutex
 
-	orders     map[string]bool
-	inventory  map[string]bool
-	payments   map[string]bool
+	orders    map[string]bool
+	inventory map[string]bool
+	payments  map[string]bool
 
 	orderIndex     int64
 	inventoryIndex int64
@@ -131,21 +132,21 @@ func (b *Benchmark) initializeServices(ctx context.Context) error {
 	// Create service configurations with retry policies
 	orderConfig := &services.Config{
 		ServiceType:   services.ServiceOrder,
-		BrokerConfig: b.config.Broker,
+		BrokerConfig:  b.config.Broker,
 		RetryAttempts: 3,
 		RetryDelay:    100 * time.Millisecond,
 	}
 
 	inventoryConfig := &services.Config{
 		ServiceType:   services.ServiceInventory,
-		BrokerConfig: b.config.Broker,
+		BrokerConfig:  b.config.Broker,
 		RetryAttempts: 3,
 		RetryDelay:    100 * time.Millisecond,
 	}
 
 	paymentConfig := &services.Config{
 		ServiceType:   services.ServicePayment,
-		BrokerConfig: b.config.Broker,
+		BrokerConfig:  b.config.Broker,
 		RetryAttempts: 3,
 		RetryDelay:    100 * time.Millisecond,
 	}
@@ -299,12 +300,11 @@ func (b *Benchmark) calculateResults() {
 
 		b.results.AverageLatency = total / time.Duration(len(b.results.latencies))
 		b.results.MedianLatency = b.results.latencies[len(b.results.latencies)/2]
-		
+
 		p95Index := int(float64(len(b.results.latencies)) * 0.95)
 		b.results.P95Latency = b.results.latencies[p95Index]
-		
+
 		p99Index := int(float64(len(b.results.latencies)) * 0.99)
 		b.results.P99Latency = b.results.latencies[p99Index]
 	}
 }
-
